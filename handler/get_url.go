@@ -2,7 +2,7 @@ package handler
 
 import "net/http"
 
-func HandleGetURL(store *URLStore) http.Handler {
+func handleGetURL(store *URLStore) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.PathValue("key")
 
@@ -12,7 +12,6 @@ func HandleGetURL(store *URLStore) http.Handler {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
 		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 	})
 }

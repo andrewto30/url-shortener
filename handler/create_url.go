@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func HandleCreateURL(store *URLStore) http.Handler {
+func handleCreateURL(store *URLStore) http.Handler {
 	type request struct {
 		URL string `json:"url"`
 	}

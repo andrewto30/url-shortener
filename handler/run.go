@@ -14,20 +14,11 @@ func Run(ctx context.Context) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 
-	mux := http.NewServeMux()
 	store := NewURLStore()
-	mux.Handle("POST /urls", HandleCreateURL(store))
-	mux.Handle("GET /{key}", HandleGetURL(store))
-	mux.HandleFunc("GET /slow", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("slow: doing important work...")
-		time.Sleep(5 * time.Second)
-		fmt.Println("slow: DONE")
-		fmt.Fprintln(w, "ok")
-	})
 
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: mux,
+		Handler: NewServer(store),
 	}
 
 	go func() {
