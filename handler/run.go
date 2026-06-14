@@ -16,8 +16,8 @@ func Run(ctx context.Context) error {
 
 	mux := http.NewServeMux()
 	store := NewURLStore()
-	mux.Handle("POST /urls", handleCreateURL(store))
-	mux.Handle("GET /{key}", handleGetURL(store))
+	mux.Handle("POST /urls", HandleCreateURL(store))
+	mux.Handle("GET /{key}", HandleGetURL(store))
 	mux.HandleFunc("GET /slow", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("slow: doing important work...")
 		time.Sleep(5 * time.Second)
