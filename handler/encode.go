@@ -1,10 +1,15 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
+
+type Validator interface {
+	Valid(ctx context.Context) map[string]string
+}
 
 func encode[T any](w http.ResponseWriter, r *http.Request, status int, v T) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -21,4 +26,17 @@ func decode[T any](r *http.Request) (T, error) {
 		return v, fmt.Errorf("decode json: %w", err)
 	}
 	return v, nil
+}
+
+func decodeValid[T Validator](r *http.Request) (T, map[string]string, error) {
+	v, err := decode[T](r)
+	if err != nil {
+		return v, nil, err
+	}
+
+	if problems := v.Valid(r.Context()); len(problems) > 0 {
+		return v, problems, fmt.Errorf("invalid %T: %d problems", v, len(problems))
+	}
+
+	return v, nil, nil
 }

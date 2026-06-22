@@ -2,12 +2,15 @@ package handler
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"time"
+
+	"github.com/andrewto30/url-shortener/services/hash"
 )
 
 func Run(ctx context.Context) error {
@@ -15,10 +18,11 @@ func Run(ctx context.Context) error {
 	defer cancel()
 
 	store := NewURLStore()
+	gen := hash.New(rand.Reader)
 
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: NewServer(store),
+		Handler: NewServer(store, gen),
 	}
 
 	go func() {

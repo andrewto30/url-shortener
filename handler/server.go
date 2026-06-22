@@ -1,10 +1,14 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
 
-func NewServer(store *URLStore) http.Handler {
+	"github.com/andrewto30/url-shortener/services/hash"
+)
+
+func NewServer(store *URLStore, gen *hash.Generator) http.Handler {
 	mux := http.NewServeMux()
-	addRoutes(mux, store)
+	addRoutes(mux, store, gen)
 
 	var h http.Handler = mux
 	h = loggingMiddleware(h)

@@ -20,6 +20,17 @@ func (u *URLStore) Save(key, url string) {
 	u.urls[key] = url
 }
 
+func (u *URLStore) SaveIfAbsent(key, url string) bool {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+
+	if _, exists := u.urls[key]; exists {
+		return false
+	}
+	u.urls[key] = url
+	return true
+}
+
 func (u *URLStore) Get(key string) (string, bool) {
 	u.mu.Lock()
 	defer u.mu.Unlock()
